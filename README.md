@@ -1,2 +1,2 @@
-# sql-style-guide
+# SQL Style Guide
 Guide for formatting SQL scripts
