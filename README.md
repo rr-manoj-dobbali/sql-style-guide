@@ -45,24 +45,26 @@ select count(*) as itemcount
 - If queries/models are run by DBT then do not mention schema or database name, just use table name
 - Use `!=` instead of `<>` since it is more popular in other programming languages
 - Ordering and grouping by a number (eg. GROUP BY 1, 2) is preferred
+- For the sake of consistency across all the queries, lets use `join` instead of `inner join`
 
 ## OTHER SPECIFIC EXAMPLES
 
-## Use `as` to rename columns
+## Use `as` to rename columns or tables
 
 ```
 -- Good
 select
     table1.column1 as table1_column1, 
     count(members.user_id) as members_count
+from ebates.dw.order_transactions as orders
 
 -- Bad
 select
     table1.column1 table1_column1, 
     count(members.user_id) members_count
+from ebates.dw.order_transactions 
 ```
 
-For aliasing table names, you can avoid using `as`
 
 ## Column selection
 
@@ -136,24 +138,6 @@ select distinct
 from ebates_prod.dw.order_transactions
 ```
 
-## Inner join vs join
-
-For the sake of consistency across all the queries, lets use `join` instead of `inner join`
-
-```
--- Good
-select tx.*, ftb.*
-from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb 
-    on tx.member_id = ftb.member_id
-
--- bad
-select tx.*, ftb.*
-from ebates_prod.dw.order_transactions tx
-inner join ebates_prod.summary.member_ftbs_by_store ftb 
-    on tx.member_id = ftb.member_id
-```
-
 ## Join order & key order same
 
 In the below example, `order_transactions` is joined first on `member_ftbs_by_store`, so the `on` condition should be in the same order, `tx.member_id = ftb.member_id` instead of `ftb.member_id = tx.member_id`
@@ -193,7 +177,7 @@ select distinct
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
-on ftb.member_id = tx.member_id
+    on ftb.member_id = tx.member_id
 
 -- Bad
 select distinct
@@ -241,6 +225,7 @@ with top10_interests as (
 
 - If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. They are easy to read. Give meaningful names to them
 - Leave an empty row above and below the query statement
+- Closing CTE parentheses and comma  should use same indentation level as `with` and other CTE names
 
 ```
 -- Good
@@ -249,7 +234,7 @@ with top10_interests as (
     select distinct interest_area, interest_score, member_id 
     from ff_last_year_member_interest_area
 
-    ),
+),
 
 last_year_store_member_interest_area as ( -- CTE comments go here
 
@@ -257,7 +242,7 @@ last_year_store_member_interest_area as ( -- CTE comments go here
     from ff_store_top_10_interest_area_last_1_yr
     where store_id = 1234
 
-    ),
+),
 
 select
     count(buy) / count(l.member_id) as cvr,
@@ -358,7 +343,7 @@ on
     tx.member_id = ftb.member_id
     and tx.store_id = ftb.store_id
 
--- Bad
+-- Bad 
 select distinct
     interest_area,
     interest_score,
@@ -368,4 +353,27 @@ from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
 on tx.member_id = ftb.member_id
     and tx.store_id = ftb.store_id
+```
+
+## Window functions
+
+Keep window functions all in single line
+
+```
+-- Good
+select
+    member_id,
+    store_id,
+    row_number() over (partition by user_id order by order_date desc) as order_rank
+from ebates_prod.dw.shopping_trips
+
+-- Okay
+select
+    user_id,
+    name,
+    row_number() over (
+        partition by user_id
+        order by order_date desc
+    ) as order_rank
+from ebates_prod.dw.shopping_trips
 ```
