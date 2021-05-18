@@ -393,21 +393,21 @@ from ebates_prod.dw.shopping_trips
 ## Simplify case statments name
 
 ```
-  -- Good
-  case
+-- Good
+case
     when lifecycle_stage = 1 then 'stage1_Newbie'
     when lifecycle_stage = 2 then 'stage2_Browser'
     when lifecycle_stage = 3 then 'stage3_Browser_Toolbar'
     when lifecycle_stage = 4 then 'stage4_Shopper_App'
-  end as lifecycle
+end as lifecycle
 
-  -- Better
-  case lifecycle_stage
+-- Better
+case lifecycle_stage
     when 1 then 'stage1_Newbie'
     when 2 then 'stage2_Browser'
     when 3 then 'stage3_Browser_Toolbar'
     WHEN 4 then 'stage4_Shopper_App'
-  end as lifecycle
+end as lifecycle
 ```
 ## Putting it all together
 
