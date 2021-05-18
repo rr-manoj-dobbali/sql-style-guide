@@ -83,7 +83,7 @@ from ebates_prod.dw.order_transactions tx
 
 -- Bad
 select distinct
-    , interest_area
+    interest_area
     , interest_score
     , i.member_id
     , order_merchant_id
@@ -92,7 +92,7 @@ from ebates_prod.dw.order_transactions
 
 ## Inner join vs join
 
-For the sake of consistency across all the queries, lets stick to using `join` instead of `inner join`
+For the sake of consistency across all the queries, lets use `join` instead of `inner join`
 
 ```
 -- Good
@@ -118,18 +118,18 @@ select distinct
     i.member_id as user_id 
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb on
-    tx.member_id = ftb.member_id
+join ebates_prod.summary.member_ftbs_by_store ftb 
+on tx.member_id = ftb.member_id
 
 -- bad : 
-    select
-        tx.order_merchant_id as store_id,
-        to_date(tx.click_date) as ds,
-        sum(tx.ot_amount) as sales_net,
-        round(ort_rebate_percentage * 100 * sales_net, 1) as commission_dummy
-    from ebates_prod.dw.order_transactions tx
-    join ebates_prod.summary.member_ftbs_by_store ftb on
-        ftb.member_id = tx.member_id
+select
+    tx.order_merchant_id as store_id,
+    to_date(tx.click_date) as ds,
+    sum(tx.ot_amount) as sales_net,
+    round(ort_rebate_percentage * 100 * sales_net, 1) as commission_dummy
+from ebates_prod.dw.order_transactions tx
+join ebates_prod.summary.member_ftbs_by_store ftb 
+on ftb.member_id = tx.member_id
 ```
 
 ## Indent should be four spaces
@@ -142,8 +142,8 @@ select distinct
     i.member_id as user_id 
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb on
-    ftb.member_id = tx.member_id
+join ebates_prod.summary.member_ftbs_by_store ftb 
+on ftb.member_id = tx.member_id
 
 -- Bad
 select distinct
@@ -152,8 +152,8 @@ select distinct
  i.member_id as user_id 
  tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb on
-    tx.member_id = ftb.member_id
+join ebates_prod.summary.member_ftbs_by_store ftb 
+on tx.member_id = ftb.member_id
 ```
 
 ## No database or schema
@@ -188,9 +188,9 @@ where store_id = 1234)
 with top10_interests as (
         select distinct interest_area, interest_score, member_id
 from ff_last_year_member_interest_area
-)
+),
 
-, last_year_store_member_interest_area(
+last_year_store_member_interest_area(
     select interest_area, rank  as top10_rank
 from ff_store_top_10_interest_area_last_1_yr
 where store_id = 1234
@@ -203,3 +203,14 @@ select
 from last_year_store_member_interest_area
 
 ```
+
+## Misc
+
+- Lines of SQL should be no longer than 80 characters
+- Use tabs instead of spaces, It's easier to keep things consistent in version control when only space characters are used.
+- Commas should be at the end of lines, except in where condition
+- `distinct` should be in the samerow as `select`
+- `as` keyword should be used when creating aliases 
+- Prefer `!=` to `<>`. This is because != is more common in other programming languages and reads like "not equal" which is how we're more likely to speak
+- Identifiers such as aliases and CTE names should be in lowercase snake_case.
+
