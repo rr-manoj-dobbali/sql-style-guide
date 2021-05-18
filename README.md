@@ -143,7 +143,7 @@ from ebates_prod.dw.order_transactions
 
 ## Join order & key order same
 
-In the below example, `order_transactions` is joined first on `member_ftbs_by_store`, so the `on` condition should be in the same order, `tx.member_id = ftb.member_id` instead of `ftb.member_id = tx.member_id`
+Specify the order of a join with the FROM table first and JOIN table second. In the below example, `order_transactions` is joined first on `member_ftbs_by_store`, so the `on` condition should be in the same order, `tx.member_id = ftb.member_id` instead of `ftb.member_id = tx.member_id`
 
 ```
 -- Good
