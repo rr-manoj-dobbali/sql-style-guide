@@ -46,6 +46,9 @@ select count(*) as itemcount
 - Use `!=` instead of `<>` since it is more popular in other programming languages
 - Ordering and grouping by a number (eg. GROUP BY 1, 2) is preferred
 - For the sake of consistency across all the queries, lets use `join` instead of `inner join`
+- Use `--` for inline single line comments
+- Use `/* */` for multi line comments
+
 
 ## OTHER SPECIFIC EXAMPLES
 
