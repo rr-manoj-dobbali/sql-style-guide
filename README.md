@@ -241,7 +241,6 @@ with top10_interests as (
 - If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. They are easy to read. Give meaningful names to them
 - Leave an empty row above and below the query statement
 
-
 ```
 -- Good
 with top10_interests as (
@@ -340,9 +339,10 @@ select
 from events
 
 
-## Joining `on` 
+## Joining `on` condition
 
-Write `on` in its own line if there are multiple joining conditions
+- Write `on` in its own line if there are multiple joining conditions
+- When multiple conditions for joining, ``
 
 ```
 -- Good
@@ -355,7 +355,7 @@ from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
 on 
     tx.member_id = ftb.member_id
-    tx.store_id = ftb.store_id
+    and tx.store_id = ftb.store_id
 
 -- Bad
 select distinct
@@ -366,12 +366,5 @@ select distinct
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
 on tx.member_id = ftb.member_id
-    tx.store_id = ftb.store_id
+    and tx.store_id = ftb.store_id
 ```
-
-## Miscellaneous
-
-- 
-- Commas should be at the end of lines, except in where condition
-- . This is because != is more common in other programming languages and reads like "not equal" which is how we're more likely to speak
-
