@@ -1,7 +1,12 @@
 # SQL Style Guide
 Guide for formatting SQL scripts
 
-# Guidelines 
+# Why Style Guide
+
+1. Increase readability
+2. Be consistent
+
+# Guidelines with examples
 
 ## Use lowercase SQL
 
@@ -19,9 +24,39 @@ SELECT DISTINCT ORDER_MERCHANT_ID AS STORE_ID, MEMBER_ID
 FROM EBATES_PROB.DW.ORDER_TRANSACTIONS
 ```
 
+## Variable names
+
+Variable names should be underscore separated
+
+```
+-- Good
+select count(*) as item_count
+
+-- Bad
+select count(*) as itemCount
+
+-- Bad
+select count(*) as itemcount
+```
+
+## Use `as` to rename columns
+
+```
+-- Good
+select
+    table1.column1 as table1_column1, 
+    count(members.user_id) as members_count
+
+-- Bad
+select
+    table1.column1 table1_column1, 
+    count(members.user_id) members_count
+```
+
 ## Column selection
 
 Keep columns selected as one row per column name if there are more than three columns
+`select` should be in its own row
 
 ```
 -- Good
@@ -160,9 +195,9 @@ on tx.member_id = ftb.member_id
 
 
 
-## Multiple nesting
+## Use CTE's
 
-if you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead
+If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. Use then early and often, and name them well.
 
 ```
 -- Bad
@@ -186,31 +221,30 @@ where store_id = 1234)
 -- Good
 
 with top10_interests as (
-        select distinct interest_area, interest_score, member_id
-from ff_last_year_member_interest_area
-),
+    select distinct interest_area, interest_score, member_id 
+    from ff_last_year_member_interest_area
+    ),
 
-last_year_store_member_interest_area(
-    select interest_area, rank  as top10_rank
-from ff_store_top_10_interest_area_last_1_yr
-where store_id = 1234
-)
+last_year_store_member_interest_area as (
+    select interest_area, rank as top10_rank 
+    from ff_store_top_10_interest_area_last_1_yr
+    where store_id = 1234
+    ),
 
 select
     count(buy) / count(l.member_id) as cvr,
     l.interest_area as interest_area,
     l.interest_score as interest_score
 from last_year_store_member_interest_area
-
 ```
 
-## Misc
+## Miscellaneous
 
 - Lines of SQL should be no longer than 80 characters
-- Use tabs instead of spaces, It's easier to keep things consistent in version control when only space characters are used.
+- Use tabs instead of spaces
 - Commas should be at the end of lines, except in where condition
 - `distinct` should be in the samerow as `select`
 - `as` keyword should be used when creating aliases 
 - Prefer `!=` to `<>`. This is because != is more common in other programming languages and reads like "not equal" which is how we're more likely to speak
 - Identifiers such as aliases and CTE names should be in lowercase snake_case.
-
+- No trailing white space
