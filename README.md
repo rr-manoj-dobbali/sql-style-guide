@@ -328,10 +328,12 @@ select
 from events
 
 
-## Joining `on` condition
+## Joining `on` & 'where' condition
 
 - Write `on` in its own line if there are multiple joining conditions
 - When multiple conditions for joining, all `and`s should be one level deeper than `on`
+- same logic applies to `where` condition
+- Only exception is when there is one 
 
 ```
 -- Good
@@ -345,6 +347,9 @@ join ebates_prod.summary.member_ftbs_by_store ftb
 on 
     tx.member_id = ftb.member_id
     and tx.store_id = ftb.store_id
+where
+    tx.member_id = 1234
+    and tx.store_id = 345
 
 -- Bad 
 select distinct
@@ -356,7 +361,11 @@ from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
 on tx.member_id = ftb.member_id
     and tx.store_id = ftb.store_id
+where tx.member_id = 1234
+    and tx.store_id = 345
 ```
+
+
 
 ## Window functions
 
