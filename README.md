@@ -173,6 +173,8 @@ join ebates_prod.summary.member_ftbs_by_store ftb
 
 ## Indent should be four spaces
 
+Use four spaces instead of tabs for indentation
+
 ```
 -- Good
 select distinct
@@ -195,13 +197,9 @@ join ebates_prod.summary.member_ftbs_by_store ftb
 on tx.member_id = ftb.member_id
 ```
 
-## No database or schema
-
-
-
 ## Use CTE's
 
-If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. Use then early and often, and name them well.
+If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. Use CTEs early and often, and name them well.
 
 ```
 -- Bad
@@ -223,7 +221,6 @@ where store_id = 1234)
         where store_id = 1234 
 
 -- Good
-
 with top10_interests as (
     select distinct interest_area, interest_score, member_id 
     from ff_last_year_member_interest_area
@@ -242,13 +239,61 @@ select
 from last_year_store_member_interest_area
 ```
 
+## Do not align aliases `as`
+
+```
+-- Good
+select 
+    cashback as cashbackPerc
+    num_stores as storecount
+    signup_date as dateSignup
+from ebates_prod.dw.order_transactions
+
+
+-- Bad
+select 
+    cashback       as cashbackPerc
+    num_stores     as storecount
+    signup_date    as dateSignup
+from ebates_prod.dw.order_transactions
+
+```
+
+## Joining `on` 
+
+Write `on` in its own line if there are multiple joining conditions
+
+```
+-- Good
+select distinct
+    interest_area,
+    interest_score,
+    i.member_id as user_id 
+    tx.order_merchant_id as store_id
+from ebates_prod.dw.order_transactions tx
+join ebates_prod.summary.member_ftbs_by_store ftb 
+on 
+    tx.member_id = ftb.member_id
+    tx.store_id = ftb.store_id
+
+-- Bad
+select distinct
+    interest_area,
+    interest_score,
+    i.member_id as user_id 
+    tx.order_merchant_id as store_id
+from ebates_prod.dw.order_transactions tx
+join ebates_prod.summary.member_ftbs_by_store ftb 
+on tx.member_id = ftb.member_id
+    tx.store_id = ftb.store_id
+```
+
 ## Miscellaneous
 
-- Lines of SQL should be no longer than 80 characters
-- Use tabs instead of spaces
+- Lines of SQL should be no longer than 100 characters
 - Commas should be at the end of lines, except in where condition
 - `distinct` should be in the samerow as `select`
-- `as` keyword should be used when creating aliases 
 - Prefer `!=` to `<>`. This is because != is more common in other programming languages and reads like "not equal" which is how we're more likely to speak
 - Identifiers such as aliases and CTE names should be in lowercase snake_case.
 - No trailing white space
+- If queries/models are run by DBT then do not mention schema or database name, just use table name
