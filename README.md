@@ -53,6 +53,8 @@ select
     count(members.user_id) members_count
 ```
 
+For aliasing table names, you can avoid using `as`
+
 ## Column selection
 
 Keep columns selected as one row per column name if there are more than three columns
@@ -133,17 +135,19 @@ For the sake of consistency across all the queries, lets use `join` instead of `
 -- Good
 select tx.*, ftb.*
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb on
-    tx.member_id = ftb.member_id
+join ebates_prod.summary.member_ftbs_by_store ftb 
+    on tx.member_id = ftb.member_id
 
 -- bad
 select tx.*, ftb.*
 from ebates_prod.dw.order_transactions tx
-inner join ebates_prod.summary.member_ftbs_by_store ftb on
-    tx.member_id = ftb.member_id
+inner join ebates_prod.summary.member_ftbs_by_store ftb 
+    on tx.member_id = ftb.member_id
 ```
 
-## Join order & Key order same
+## Join order & key order same
+
+In the below example, `order_transactions` is joined first on `member_ftbs_by_store`, so the `on` condition should be in the same order, `tx.member_id = ftb.member_id` instead of `ftb.member_id = tx.member_id`
 
 ```
 -- Good
@@ -154,7 +158,7 @@ select distinct
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
-on tx.member_id = ftb.member_id
+    on tx.member_id = ftb.member_id
 
 -- bad : 
 select
@@ -164,7 +168,7 @@ select
     round(ort_rebate_percentage * 100 * sales_net, 1) as commission_dummy
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
-on ftb.member_id = tx.member_id
+    on ftb.member_id = tx.member_id
 ```
 
 ## Indent should be four spaces
