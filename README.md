@@ -168,7 +168,7 @@ from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
     on tx.member_id = ftb.member_id
 
--- bad : 
+-- Bad
 select
     tx.order_merchant_id as store_id,
     to_date(tx.click_date) as ds,
