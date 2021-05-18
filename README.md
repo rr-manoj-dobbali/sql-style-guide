@@ -328,7 +328,7 @@ select
 from events
 
 
-## Joining `on` & 'where' condition
+## `on` & `where` condition
 
 - Write `on` in its own line if there are multiple joining conditions
 - When multiple conditions for joining, all `and`s should be one level deeper than `on`
