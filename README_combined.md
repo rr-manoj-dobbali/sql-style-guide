@@ -22,9 +22,9 @@ select distinct
     tx.signup_date as date_signup,
     tx.member_engaged,
     tx.lifecycle_stage, 
-    case
-        when tx.application_type = 'Webpage' then 'Website'
-        when tx.application_type = 'App' then 'Mobile'
+    case tx.application_type
+        when 'Webpage' then 'Website'
+        when 'App' then 'Mobile'
         else 'Other'
     end as page_name
 from ebates_prod.dw.order_transactions tx
