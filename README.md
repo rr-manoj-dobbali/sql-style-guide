@@ -71,8 +71,8 @@ from ebates.dw.order_transactions
 
 ## Column selection
 
-Keep columns selected as one row per column name if there are more than three columns
-`select` should be in its own row
+- Keep columns selected as one row per column name
+- `select` should be in its own row
 
 ```
 -- Good
@@ -106,7 +106,7 @@ select member_id, cashback_rate, sales, num_orders, commission, cashback, number
 from ebates_prod.temp.some_table
 ```
 
-If number of columns in selection is less than three, write it down in a single line or write one column per line
+If number of columns in selection is less than three or if you are selecting all the columns using `*`, write it down in a single line or write one column per line
 
 ```
 -- Good
@@ -379,4 +379,24 @@ select
         order by order_date desc
     ) as order_rank
 from ebates_prod.dw.shopping_trips
+```
+
+## Simplify case statments name
+
+```
+  -- Good
+  case
+    when lifecycle_stage = 1 then 'stage1_Newbie'
+    when lifecycle_stage = 2 then 'stage2_Browser'
+    when lifecycle_stage = 3 then 'stage3_Browser_Toolbar'
+    when lifecycle_stage = 4 then 'stage4_Shopper_App'
+  end as lifecycle
+
+  -- Better
+  case lifecycle_stage
+    when 1 then 'stage1_Newbie'
+    when 2 then 'stage2_Browser'
+    when 3 then 'stage3_Browser_Toolbar'
+    WHEN 4 then 'stage4_Shopper_App'
+  end as lifecycle
 ```
