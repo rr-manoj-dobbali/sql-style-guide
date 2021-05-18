@@ -299,6 +299,7 @@ from ebates_prod.dw.order_transactions
 - `case`, `end` should be in its own line with one indentation. `end` line will have aliased column name
 - Each `when` should be on its own line with one level deeper indentation
 
+```
 -- Good
 select
     case
@@ -326,7 +327,7 @@ select
         else 'Other'        
     end as page_name
 from events
-
+```
 
 ## `on` & `where` condition
 
