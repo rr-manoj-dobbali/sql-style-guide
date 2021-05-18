@@ -199,7 +199,6 @@ on tx.member_id = ftb.member_id
 
 ## Use CTE's
 
-
 - Queries within the CTE's should be one level indented (4 spaces)
 - All the queries within CTE's should follow rest of the guidelines 
 - Commas seperating queries/CTE's should be at the end of each query/CTE instead of begining of next CTE, For example
@@ -228,7 +227,7 @@ with top10_interests as (
     ...
 ```
 
-If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. Use CTEs early and often, and name them well. There are easy to read. 
+If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. They are easy to read. Give meaningful names to them
 
 ```
 -- Good
