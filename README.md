@@ -8,7 +8,9 @@ Guide for formatting SQL scripts
 
 # Guidelines with examples
 
-## Use lowercase SQL
+## General 
+
+- Use all lowercase SQL
 
 ```
 -- Good
@@ -24,9 +26,7 @@ SELECT DISTINCT ORDER_MERCHANT_ID AS STORE_ID, MEMBER_ID
 FROM EBATES_PROB.DW.ORDER_TRANSACTIONS
 ```
 
-## Variable names
-
-Variable names should be underscore separated
+- Fieldnames or Variable names or aliased table names should be in `snake_cased`
 
 ```
 -- Good
@@ -38,6 +38,14 @@ select count(*) as itemCount
 -- Bad
 select count(*) as itemcount
 ```
+
+- For Indentation, use 4 spaces for one level of indentation and 8 for deeper and so on..
+- Lines of SQL should be no longer than 100 characters. TODO : How do we make sure of that? 
+- No trailing white space
+- If queries/models are run by DBT then do not mention schema or database name, just use table name
+- Use `!=` instead of `<>` since it is more popular in other programming languages
+
+## OTHER SPECIFIC EXAMPLES
 
 ## Use `as` to rename columns
 
@@ -173,7 +181,7 @@ join ebates_prod.summary.member_ftbs_by_store ftb
 
 ## Indent should be four spaces
 
-Use four spaces instead of tabs for indentation
+Use four spaces instead of tabs for indentation. Configure editor to convert tabs to spaces
 
 ```
 -- Good
@@ -206,11 +214,14 @@ on tx.member_id = ftb.member_id
 ```
 -- Good
 with top10_interests as (
+
     select distinct interest_area, interest_score, member_id 
     from ff_last_year_member_interest_area
+
     ),
 
 last_year_store_member_interest_area as (
+
     select interest_area, rank as top10_rank 
     ...
     ...
@@ -227,19 +238,25 @@ with top10_interests as (
     ...
 ```
 
-If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. They are easy to read. Give meaningful names to them
+- If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. They are easy to read. Give meaningful names to them
+- Leave an empty row above and below the query statement
+
 
 ```
 -- Good
 with top10_interests as (
+
     select distinct interest_area, interest_score, member_id 
     from ff_last_year_member_interest_area
+
     ),
 
-last_year_store_member_interest_area as (
+last_year_store_member_interest_area as ( -- CTE comments go here
+
     select interest_area, rank as top10_rank 
     from ff_store_top_10_interest_area_last_1_yr
     where store_id = 1234
+
     ),
 
 select
@@ -354,10 +371,7 @@ on tx.member_id = ftb.member_id
 
 ## Miscellaneous
 
-- Lines of SQL should be no longer than 100 characters
+- 
 - Commas should be at the end of lines, except in where condition
-- `distinct` should be in the samerow as `select`
-- Prefer `!=` to `<>`. This is because != is more common in other programming languages and reads like "not equal" which is how we're more likely to speak
-- Identifiers such as aliases and CTE names should be in lowercase snake_case.
-- No trailing white space
-- If queries/models are run by DBT then do not mention schema or database name, just use table name
+- . This is because != is more common in other programming languages and reads like "not equal" which is how we're more likely to speak
+
