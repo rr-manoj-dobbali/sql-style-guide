@@ -44,6 +44,7 @@ select count(*) as itemcount
 - No trailing white space
 - If queries/models are run by DBT then do not mention schema or database name, just use table name
 - Use `!=` instead of `<>` since it is more popular in other programming languages
+- Ordering and grouping by a number (eg. GROUP BY 1, 2) is preferred
 
 ## OTHER SPECIFIC EXAMPLES
 
@@ -342,7 +343,7 @@ from events
 ## Joining `on` condition
 
 - Write `on` in its own line if there are multiple joining conditions
-- When multiple conditions for joining, ``
+- When multiple conditions for joining, all `and`s should be one level deeper than `on`
 
 ```
 -- Good

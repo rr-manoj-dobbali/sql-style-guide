@@ -36,7 +36,7 @@ where
     tx.member_id = 1234
     and tx.store_id = 345
     and ftb.cashback > 10
-
+    and lifecycle_stage !='lst'
 
 -- Bad 
 SELECT distinct tx.member_id, tx.store_id, tx.cashback_rate
