@@ -21,7 +21,12 @@ select distinct
     tx.num_stores as store_count,
     tx.signup_date as date_signup,
     tx.member_engaged,
-    tx.lifecycle_stage
+    tx.lifecycle_stage, 
+    case
+        when tx.application_type = 'Webpage' then 'Website'
+        when tx.application_type = 'App' then 'Mobile'
+        else 'Other'
+    end as page_name
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
 on
@@ -43,6 +48,11 @@ SELECT distinct tx.member_id, tx.store_id, tx.cashback_rate
     , tx.signup_date    AS dateSignup
     , tx.member_engaged
     , tx.lifecycle_stage
+    , case when tx.application_type = 'Webpage' then 'Website'
+        when tx.application_type = 'App' 
+            then 'Mobile'
+        else 'Other'
+    end as page_name
 FROM ebates_prod.dw.order_transactions tx
 INNER JOIN ebates_prod.summary.member_ftbs_by_store ftb 
     ON ftb.member_id = tx.member_id AND tx.store_id = ftb.store_id

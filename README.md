@@ -199,9 +199,57 @@ on tx.member_id = ftb.member_id
 
 ## Use CTE's
 
-If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. Use CTEs early and often, and name them well.
+
+- Queries within the CTE's should be one level indented (4 spaces)
+- All the queries within CTE's should follow rest of the guidelines 
+- Commas seperating queries/CTE's should be at the end of each query/CTE instead of begining of next CTE, For example
 
 ```
+-- Good
+with top10_interests as (
+    select distinct interest_area, interest_score, member_id 
+    from ff_last_year_member_interest_area
+    ),
+
+last_year_store_member_interest_area as (
+    select interest_area, rank as top10_rank 
+    ...
+    ...
+
+-- Bad
+with top10_interests as (
+    select distinct interest_area, interest_score, member_id 
+    from ff_last_year_member_interest_area
+    )
+
+, last_year_store_member_interest_area as (
+    select interest_area, rank as top10_rank 
+    ...
+    ...
+```
+
+If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. Use CTEs early and often, and name them well. There are easy to read. 
+
+```
+-- Good
+with top10_interests as (
+    select distinct interest_area, interest_score, member_id 
+    from ff_last_year_member_interest_area
+    ),
+
+last_year_store_member_interest_area as (
+    select interest_area, rank as top10_rank 
+    from ff_store_top_10_interest_area_last_1_yr
+    where store_id = 1234
+    ),
+
+select
+    count(buy) / count(l.member_id) as cvr,
+    l.interest_area as interest_area,
+    l.interest_score as interest_score
+from last_year_store_member_interest_area
+
+
 -- Bad
 select
     count(buy) / count(l.member_id) as cvr,
@@ -220,23 +268,6 @@ where store_id = 1234)
         from ff_store_shopped_members_before_2_yrs
         where store_id = 1234 
 
--- Good
-with top10_interests as (
-    select distinct interest_area, interest_score, member_id 
-    from ff_last_year_member_interest_area
-    ),
-
-last_year_store_member_interest_area as (
-    select interest_area, rank as top10_rank 
-    from ff_store_top_10_interest_area_last_1_yr
-    where store_id = 1234
-    ),
-
-select
-    count(buy) / count(l.member_id) as cvr,
-    l.interest_area as interest_area,
-    l.interest_score as interest_score
-from last_year_store_member_interest_area
 ```
 
 ## Do not align aliases `as`
@@ -258,6 +289,40 @@ select
 from ebates_prod.dw.order_transactions
 
 ```
+
+## Aligning case/when statements
+
+- `case`, `end` should be in its own line with one indentation. `end` line will have aliased column name
+- Each `when` should be on its own line with one level deeper indentation
+
+-- Good
+select
+    case
+        when application_type = 'Webpage' then 'Website'
+        when application_type = 'App' then 'Mobile'
+        else 'Other'
+    end as page_name
+from events
+
+-- Bad
+select
+    case
+        when application_type = 'Webpage'
+            then 'Website'
+        when application_type = 'App'
+            then 'Mobile'
+        else 'Other'            
+    end as page_name
+from events
+
+-- Bad 
+select
+    case when application_type = 'viewed_homepage' then 'Homepage'
+        when application_type = 'viewed_editor' then 'Editor'
+        else 'Other'        
+    end as page_name
+from events
+
 
 ## Joining `on` 
 
