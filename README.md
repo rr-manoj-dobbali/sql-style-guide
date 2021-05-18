@@ -270,8 +270,7 @@ where store_id = 1234)
     and member_id not in (
         select member_id
         from ff_store_shopped_members_before_2_yrs
-        where store_id = 1234 
-
+        where store_id = 1234
 ```
 
 ## Do not align aliases `as`
@@ -283,7 +282,6 @@ select
     num_stores as storecount
     signup_date as dateSignup
 from ebates_prod.dw.order_transactions
-
 
 -- Bad
 select 
@@ -332,7 +330,7 @@ from events
 ## `on` & `where` condition
 
 - Write `on` in its own line if there are multiple joining conditions
-- When multiple conditions for joining, all `and`s should be one level deeper than `on`
+- When multiple conditions for joining, all `and`s should be one level deeper than `on`, each condition should end with `and` instead of starting with it
 - same logic applies to `where` condition
 - Only exception is when there is only one condition
 
@@ -346,11 +344,11 @@ select distinct
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
 on 
-    tx.member_id = ftb.member_id
-    and tx.store_id = ftb.store_id
+    tx.member_id = ftb.member_id and
+    tx.store_id = ftb.store_id
 where
-    tx.member_id = 1234
-    and tx.store_id = 345
+    tx.member_id = 1234 and
+    tx.store_id = 345
 
 -- Bad 
 select distinct
@@ -435,13 +433,13 @@ with members as (
     from ebates_prod.dw.order_transactions tx
     join ebates_prod.summary.member_ftbs_by_store ftb 
     on
-        tx.member_id = ftb.member_id
-        and tx.store_id = ftb.store_id
+        tx.member_id = ftb.member_id and
+        tx.store_id = ftb.store_id
     where 
-        tx.member_id = 1234
-        and tx.store_id = 345
-        and ftb.cashback > 10
-        and lifecycle_stage !='lst'
+        tx.member_id = 1234 and
+        tx.store_id = 345 and
+        ftb.cashback > 10 and
+        lifecycle_stage !='lst'
 
 ), 
 
