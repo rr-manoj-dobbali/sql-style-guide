@@ -48,6 +48,7 @@ select count(*) as itemcount
 - For the sake of consistency across all the queries, lets use `join` instead of `inner join`
 - Use `--` for inline single line comments
 - Use `/* */` for multi line comments
+- Use single quotes for variable values, in where conditions, case statements etc
 
 
 ## OTHER SPECIFIC EXAMPLES
@@ -253,7 +254,6 @@ select
     l.interest_score as interest_score
 from last_year_store_member_interest_area
 
-
 -- Bad
 select
     count(buy) / count(l.member_id) as cvr,
@@ -364,8 +364,6 @@ where tx.member_id = 1234
     and tx.store_id = 345
 ```
 
-
-
 ## Window functions
 
 Keep window functions all in single line
@@ -408,6 +406,7 @@ case lifecycle_stage
     WHEN 4 then 'stage4_Shopper_App'
 end as lifecycle
 ```
+
 ## Putting it all together
 
 ```
