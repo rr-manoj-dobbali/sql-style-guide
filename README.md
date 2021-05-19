@@ -407,7 +407,7 @@ case lifecycle_stage
 end as lifecycle
 ```
 
-## Putting it all together
+## Query designed with all the guidelines above
 
 ```
 with members as (
