@@ -40,7 +40,7 @@ select count(*) as itemcount
 ```
 
 - For Indentation, use 4 spaces for one level of indentation and 8 for deeper and so on..
-- Lines of SQL should be no longer than 100 characters. TODO : How do we make sure of that? 
+- Lines of SQL should be no longer than 120 characters. TODO : How do we make sure of that? 
 - No trailing white space
 - If queries/models are run by DBT then do not mention schema or database name, just use table name
 - Use `!=` instead of `<>` since it is more popular in other programming languages
@@ -91,7 +91,6 @@ select
 from ebates_prod.temp.some_table
 
 -- Bad : Dont add few columns in a line and a few other in next line with one column per line
-
 select member_id, cashback_rate, sales,
     num_orders,
     commission,
@@ -155,7 +154,7 @@ select distinct
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
-    on tx.member_id = ftb.member_id
+on tx.member_id = ftb.member_id
 
 -- Bad
 select
@@ -165,7 +164,7 @@ select
     round(ort_rebate_percentage * 100 * sales_net, 1) as commission_dummy
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
-    on ftb.member_id = tx.member_id
+on ftb.member_id = tx.member_id
 ```
 
 ## Indent should be four spaces
@@ -181,7 +180,7 @@ select distinct
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
-    on ftb.member_id = tx.member_id
+on ftb.member_id = tx.member_id
 
 -- Bad
 select distinct
@@ -198,19 +197,15 @@ on tx.member_id = ftb.member_id
 
 - Queries within the CTE's should be one level indented (4 spaces)
 - All the queries within CTE's should follow rest of the guidelines 
-- Commas seperating queries/CTE's should be at the end of each query/CTE instead of begining of next CTE, For example
+- Commas separating queries/CTE's should be at the end of each query/CTE instead of beginning of next CTE, For example
 
 ```
 -- Good
 with top10_interests as (
-
     select distinct interest_area, interest_score, member_id 
     from ff_last_year_member_interest_area
-
-    ),
-
+),
 last_year_store_member_interest_area as (
-
     select interest_area, rank as top10_rank 
     ...
     ...
@@ -228,24 +223,20 @@ with top10_interests as (
 ```
 
 - If you have to do nesting more than once or use multiple sub queries within a query, use CTEs instead. They are easy to read. Give meaningful names to them
-- Leave an empty row above and below the query statement
-- Closing CTE parentheses and comma  should use same indentation level as `with` and other CTE names
+- Closing CTE parentheses and comma should be at beginning of the line separating queires in CTEs
+- Separate each query within CTE with a blank line
 
 ```
 -- Good
 with top10_interests as (
-
     select distinct interest_area, interest_score, member_id 
     from ff_last_year_member_interest_area
-
 ),
 
 last_year_store_member_interest_area as ( -- CTE comments go here
-
     select interest_area, rank as top10_rank 
     from ff_store_top_10_interest_area_last_1_yr
     where store_id = 1234
-
 ),
 
 select
@@ -292,39 +283,47 @@ from ebates_prod.dw.order_transactions
 
 ```
 
-## Aligning case/when statements
+## Formatting case/when statements
 
 - `case`, `end` should be in its own line with one indentation. `end` line will have aliased column name
 - Each `when` should be on its own line with one level deeper indentation
 
 ```
 -- Good
+case lifecycle_stage
+    when 1 then 'stage1_Newbie'
+    when 2 then 'stage2_Browser'
+    when 3 then 'stage3_Browser_Toolbar'
+    WHEN 4 then 'stage4_Shopper_App'
+end as lifecycle
+
+-- Bad : Do not repeat the column name on which case statement is being implemented
+select 
+    case
+        when lifecycle_stage = 1 then 'stage1_Newbie'
+        when lifecycle_stage = 2 then 'stage2_Browser'
+        when lifecycle_stage = 3 then 'stage3_Browser_Toolbar'
+        when lifecycle_stage = 4 then 'stage4_Shopper_App'
+    end as lifecycle
+
+-- Bad : when statements are in multiple lines
 select
     case
-        when application_type = 'Webpage' then 'Website'
-        when application_type = 'App' then 'Mobile'
-        else 'Other'
-    end as page_name
-from events
+        when lifecycle_stage = 1
+            then 'stage1_Newbie'
+        when lifecycle_stage = 2
+            then 'stage2_Browser'
+    ......
+    .....
+    ...
 
--- Bad
+-- Bad : Case and first When statement is in the same line
 select
-    case
-        when application_type = 'Webpage'
-            then 'Website'
-        when application_type = 'App'
-            then 'Mobile'
-        else 'Other'            
-    end as page_name
-from events
-
--- Bad 
-select
-    case when application_type = 'viewed_homepage' then 'Homepage'
-        when application_type = 'viewed_editor' then 'Editor'
-        else 'Other'        
-    end as page_name
-from events
+    case when lifecycle_stage = 1 then 'stage1_Newbie'
+        when lifecycle_stage = 1 then 'stage2_Browser'
+    ...
+    ..
+    .
 ```
 
 ## `on` & `where` condition
@@ -332,7 +331,7 @@ from events
 - Write `on` in its own line if there are multiple joining conditions
 - When multiple conditions for joining, all `and`s should be one level deeper than `on`, each condition should end with `and` instead of starting with it
 - same logic applies to `where` condition
-- Only exception is when there is only one condition
+- Only exception is when there is only one condition, in that case `on` condition can be in the same line as `on`
 
 ```
 -- Good
@@ -345,10 +344,19 @@ from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
 on 
     tx.member_id = ftb.member_id and
-    tx.store_id = ftb.store_id
+    tx.store_id = ftb.store_id and
+    tx.column_x = ftb.column_y
 where
     tx.member_id = 1234 and
     tx.store_id = 345
+
+-- Good
+select distinct 
+    ...
+from ebates_prod.dw.order_transactions tx
+join ebates_prod.summary.member_ftbs_by_store ftb 
+on  tx.member_id = ftb.member_id
+where tx.member_id = 1234
 
 -- Bad 
 select distinct
@@ -387,31 +395,10 @@ select
 from ebates_prod.dw.shopping_trips
 ```
 
-## Simplify case statments name
-
-```
--- Good
-case
-    when lifecycle_stage = 1 then 'stage1_Newbie'
-    when lifecycle_stage = 2 then 'stage2_Browser'
-    when lifecycle_stage = 3 then 'stage3_Browser_Toolbar'
-    when lifecycle_stage = 4 then 'stage4_Shopper_App'
-end as lifecycle
-
--- Better
-case lifecycle_stage
-    when 1 then 'stage1_Newbie'
-    when 2 then 'stage2_Browser'
-    when 3 then 'stage3_Browser_Toolbar'
-    WHEN 4 then 'stage4_Shopper_App'
-end as lifecycle
-```
-
 ## Query designed with all the guidelines above
 
 ```
 with members as (
-
     select distinct
         tx.member_id,
         tx.store_id,
@@ -439,17 +426,14 @@ with members as (
         tx.store_id = 345 and
         ftb.cashback > 10 and
         lifecycle_stage !='lst'
-
 ), 
 
 stores as (
-
     select 
         store_id,
         ...
         ...
     from ebates_prod.dw.stores
-
 )
 
 select 
@@ -457,6 +441,8 @@ select
     s.*
 from members m 
 join stores s
-    on m.member_id = s.member_id
-    and m.store_id = s.store_id
+on 
+    m.member_id = s.member_id and 
+    m.store_id = s.store_id
+where m.member_id = 123
 ```
