@@ -181,7 +181,7 @@ select distinct
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
-on ftb.member_id = tx.member_id
+on tx.member_id = ftb.member_id
 
 -- Bad
 select distinct
