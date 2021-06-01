@@ -8,7 +8,7 @@ Guide for formatting SQL scripts
 
 # Guidelines with examples
 
-## General 
+## General
 
 - Use all lowercase SQL
 
@@ -17,11 +17,11 @@ Guide for formatting SQL scripts
 select distinct order_merchant_id as store_id, member_id
 from ebates_prod.dw.order_transactions
 
--- Bad : Dont use upper case & lower case combinations 
+-- Bad : Dont use upper case & lower case combinations
 SELECT DISTINCT order_merchant_id AS store_id, member_id
 FROM ebates_prod.dw.order_transactions
 
--- Bad : Dont use upper case for queries 
+-- Bad : Dont use upper case for queries
 SELECT DISTINCT ORDER_MERCHANT_ID AS STORE_ID, MEMBER_ID
 FROM EBATES_PROB.DW.ORDER_TRANSACTIONS
 ```
@@ -40,7 +40,7 @@ select count(*) as itemcount
 ```
 
 - For Indentation, use 4 spaces for one level of indentation and 8 for deeper and so on..
-- Lines of SQL should be no longer than 120 characters. TODO : How do we make sure of that? 
+- Lines of SQL should be no longer than 120 characters. TODO : How do we make sure of that?
 - No trailing white space
 - If queries/models are run by DBT then do not mention schema or database name, just use table name
 - Use `!=` instead of `<>` since it is more popular in other programming languages
@@ -154,7 +154,7 @@ select distinct
     ftb.member_id as user_id,
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb 
+join ebates_prod.summary.member_ftbs_by_store ftb
 on tx.member_id = ftb.member_id
 
 -- Bad
@@ -164,7 +164,7 @@ select distinct
     ftb.member_id as user_id,
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb 
+join ebates_prod.summary.member_ftbs_by_store ftb
 on ftb.member_id = tx.member_id
 ```
 
@@ -190,35 +190,35 @@ select distinct
  ftb.member_id as user_id, 
  tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb 
+join ebates_prod.summary.member_ftbs_by_store ftb
 on tx.member_id = ftb.member_id
 ```
 
 ## Use CTE's
 
 - Queries within the CTE's should be one level indented (4 spaces)
-- All the queries within CTE's should follow rest of the guidelines 
+- All the queries within CTE's should follow rest of the guidelines
 - Commas separating queries/CTE's should be at the end of each query/CTE instead of beginning of next CTE, For example
 
 ```
 -- Good
 with top10_interests as (
-    select distinct interest_area, interest_score, member_id 
+    select distinct interest_area, interest_score, member_id
     from ff_last_year_member_interest_area
 ),
 last_year_store_member_interest_area as (
-    select interest_area, rank as top10_rank 
+    select interest_area, rank as top10_rank
     ...
     ...
 
 -- Bad
 with top10_interests as (
-    select distinct interest_area, interest_score, member_id 
+    select distinct interest_area, interest_score, member_id
     from ff_last_year_member_interest_area
     )
 
 , last_year_store_member_interest_area as (
-    select interest_area, rank as top10_rank 
+    select interest_area, rank as top10_rank
     ...
     ...
 ```
@@ -230,12 +230,12 @@ with top10_interests as (
 ```
 -- Good
 with top10_interests as (
-    select distinct interest_area, interest_score, member_id 
+    select distinct interest_area, interest_score, member_id
     from ff_last_year_member_interest_area
 ),
 
 last_year_store_member_interest_area as ( -- CTE comments go here
-    select interest_area, rank as top10_rank 
+    select interest_area, rank as top10_rank
     from ff_store_top_10_interest_area_last_1_yr
     where store_id = 1234
 )
@@ -300,7 +300,7 @@ select
     end as lifecycle
 
 -- Bad : Do not repeat the column name on which case statement is being implemented
-select 
+select
     case
         when lifecycle_stage = 1 then 'stage1_Newbie'
         when lifecycle_stage = 2 then 'stage2_Browser'
@@ -343,8 +343,8 @@ select distinct
     ftb.member_id as user_id,
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb 
-on 
+join ebates_prod.summary.member_ftbs_by_store ftb
+on
     tx.member_id = ftb.member_id and
     tx.store_id = ftb.store_id and
     tx.column_x = ftb.column_y
@@ -353,21 +353,21 @@ where
     tx.store_id = 345
 
 -- Good
-select distinct 
+select distinct
     ...
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb 
+join ebates_prod.summary.member_ftbs_by_store ftb
 on  tx.member_id = ftb.member_id
 where tx.member_id = 1234
 
--- Bad 
+-- Bad
 select distinct
     interest_area,
     interest_score,
     i.member_id as user_id,
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb 
+join ebates_prod.summary.member_ftbs_by_store ftb
 on tx.member_id = ftb.member_id
     and tx.store_id = ftb.store_id
 where tx.member_id = 1234
@@ -412,18 +412,18 @@ with members as (
         tx.num_stores as store_count,
         tx.signup_date as date_signup,
         tx.member_engaged,
-        tx.lifecycle_stage, 
+        tx.lifecycle_stage,
         case tx.application_type
             when 'Webpage' then 'Website'
             when 'App' then 'Mobile'
             else 'Other'
         end as page_name
     from ebates_prod.dw.order_transactions tx
-    join ebates_prod.summary.member_ftbs_by_store ftb 
+    join ebates_prod.summary.member_ftbs_by_store ftb
     on
         tx.member_id = ftb.member_id and
         tx.store_id = ftb.store_id
-    where 
+    where
         tx.member_id = 1234 and
         tx.store_id = 345 and
         tx.lifecycle_stage !='lst' and
@@ -432,14 +432,14 @@ with members as (
 ), 
 
 stores as (
-    select 
+    select
         store_id,
         ...
         ...
     from ebates_prod.dw.stores
 )
 
-select 
+select
     m.*,
     s.*
 from members as m 
