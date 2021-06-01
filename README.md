@@ -12,7 +12,7 @@ Guide for formatting SQL scripts
 
 - Use all lowercase SQL
 
-```
+```sql
 -- Good
 select distinct order_merchant_id as store_id, member_id
 from ebates_prod.dw.order_transactions
@@ -28,7 +28,7 @@ FROM EBATES_PROB.DW.ORDER_TRANSACTIONS
 
 - Fieldnames or Variable names or aliased table names should be in `snake_cased`
 
-```
+```sql
 -- Good
 select count(*) as item_count
 
@@ -56,7 +56,7 @@ select count(*) as itemcount
 
 ## Use `as` to rename columns or tables
 
-```
+```sql
 -- Good
 select
     orders.column1 as orders_column1, 
@@ -76,7 +76,7 @@ from ebates.dw.order_transactions
 - Keep columns selected as one row per column name
 - `select` should be in its own row
 
-```
+```sql
 -- Good
 select
     member_id,
@@ -109,7 +109,7 @@ from ebates_prod.temp.some_table
 
 If number of columns in selection is less than three or if you are selecting all the columns using `*`, write it down in a single line or write one column per line
 
-```
+```sql
 -- Good
 select
     member_id,
@@ -124,7 +124,7 @@ from ebates_prod.temp.some_table
 
 ## Dont start column names with commas
 
-```
+```sql
 -- Good
 select distinct
     interest_area,
@@ -146,7 +146,7 @@ from ebates_prod.dw.order_transactions
 
 Specify the order of a join with the FROM table first and JOIN table second. In the below example, `order_transactions` is joined first on `member_ftbs_by_store`, so the `on` condition should be in the same order, `tx.member_id = ftb.member_id` instead of `ftb.member_id = tx.member_id`
 
-```
+```sql
 -- Good
 select distinct
     tx.interest_area,
@@ -172,7 +172,7 @@ on ftb.member_id = tx.member_id
 
 Use four spaces instead of tabs for indentation. Configure editor to convert tabs to spaces
 
-```
+```sql
 -- Good
 select distinct
     tx.interest_area,
@@ -200,7 +200,7 @@ on tx.member_id = ftb.member_id
 - All the queries within CTE's should follow rest of the guidelines
 - Commas separating queries/CTE's should be at the end of each query/CTE instead of beginning of next CTE, For example
 
-```
+```sql
 -- Good
 with top10_interests as (
     select distinct interest_area, interest_score, member_id
@@ -227,7 +227,7 @@ with top10_interests as (
 - Closing CTE parentheses and comma should be at beginning of the line separating queires in CTEs
 - Separate each query within CTE with a blank line
 
-```
+```sql
 -- Good
 with top10_interests as (
     select distinct interest_area, interest_score, member_id
@@ -267,7 +267,7 @@ where store_id = 1234) l
 
 ## Do not align aliases `as`
 
-```
+```sql
 -- Good
 select 
     cashback as cashback_perc,
@@ -289,7 +289,7 @@ from ebates_prod.dw.order_transactions
 - `case`, `end` should be in its own line with one indentation. `end` line will have aliased column name
 - Each `when` should be on its own line with one level deeper indentation
 
-```
+```sql
 -- Good
 select
     case lifecycle_stage
@@ -335,7 +335,7 @@ select
 - same logic applies to `where` condition
 - Only exception is when there is only one condition, in that case `on` condition can be in the same line as `on`
 
-```
+```sql
 -- Good
 select distinct
     tx.interest_area,
@@ -378,7 +378,7 @@ where tx.member_id = 1234
 
 Keep window functions all in single line
 
-```
+```sql
 -- Good
 select
     member_id,
@@ -399,7 +399,7 @@ from ebates_prod.dw.shopping_trips
 
 ## Query designed with all the guidelines above
 
-```
+```sql
 with members as (
     select distinct
         tx.member_id,
