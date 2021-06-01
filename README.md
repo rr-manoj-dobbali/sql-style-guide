@@ -44,7 +44,8 @@ select count(*) as itemcount
 - No trailing white space
 - If queries/models are run by DBT then do not mention schema or database name, just use table name
 - Use `!=` instead of `<>` since it is more popular in other programming languages
-- Ordering and grouping by a number (eg. GROUP BY 1, 2) is not preferred since it leads to confusion. Always use names instead
+- Ordering and grouping by a number (eg. GROUP BY 1, 2, 3, 4) is not preferred since it leads to confusion. Always use names instead.
+  Only exception is when there are only one or two columns for group by or order by
 - For the sake of consistency across all the queries, lets use `join` instead of `inner join`
 - Use `--` for inline single line comments
 - Use `/* */` for multi line comments
