@@ -59,13 +59,13 @@ select count(*) as itemcount
 ```
 -- Good
 select
-    orders.column1 as table1_column1, 
+    orders.column1 as orders_column1, 
     count(orders.user_id) as members_count
 from ebates.dw.order_transactions as orders
 
 -- Bad
 select
-    orders.column1 table1_column1, 
+    orders.column1 orders_column1, 
     count(orders.user_id) members_count
 from ebates.dw.order_transactions 
 ```
