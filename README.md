@@ -58,14 +58,14 @@ select count(*) as itemcount
 ```
 -- Good
 select
-    table1.column1 as table1_column1, 
-    count(members.user_id) as members_count
+    orders.column1 as table1_column1, 
+    count(orders.user_id) as members_count
 from ebates.dw.order_transactions as orders
 
 -- Bad
 select
-    table1.column1 table1_column1, 
-    count(members.user_id) members_count
+    orders.column1 table1_column1, 
+    count(orders.user_id) members_count
 from ebates.dw.order_transactions 
 ```
 
@@ -128,15 +128,15 @@ from ebates_prod.temp.some_table
 select distinct
     interest_area,
     interest_score,
-    i.member_id,
+    member_id,
     order_merchant_id as store_id
-from ebates_prod.dw.order_transactions tx
+from ebates_prod.dw.order_transactions
 
 -- Bad
 select distinct
     interest_area
     , interest_score
-    , i.member_id
+    , member_id
     , order_merchant_id
 from ebates_prod.dw.order_transactions
 ```
@@ -148,20 +148,20 @@ Specify the order of a join with the FROM table first and JOIN table second. In 
 ```
 -- Good
 select distinct
-    interest_area,
-    interest_score,
-    i.member_id as user_id 
+    tx.interest_area,
+    tx.interest_score,
+    ftb.member_id as user_id 
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
 on tx.member_id = ftb.member_id
 
 -- Bad
-select
-    tx.order_merchant_id as store_id,
-    to_date(tx.click_date) as ds,
-    sum(tx.ot_amount) as sales_net,
-    round(ort_rebate_percentage * 100 * sales_net, 1) as commission_dummy
+select distinct
+    tx.interest_area,
+    tx.interest_score,
+    ftb.member_id as user_id 
+    tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
 on ftb.member_id = tx.member_id
@@ -174,9 +174,9 @@ Use four spaces instead of tabs for indentation. Configure editor to convert tab
 ```
 -- Good
 select distinct
-    interest_area,
-    interest_score,
-    i.member_id as user_id 
+    tx.interest_area,
+    tx.interest_score,
+    ftb.member_id as user_id 
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
@@ -184,9 +184,9 @@ on ftb.member_id = tx.member_id
 
 -- Bad
 select distinct
- interest_area,
- interest_score,
- i.member_id as user_id 
+ tx.interest_area,
+ tx.interest_score,
+ ftb.member_id as user_id 
  tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
@@ -237,12 +237,12 @@ last_year_store_member_interest_area as ( -- CTE comments go here
     select interest_area, rank as top10_rank 
     from ff_store_top_10_interest_area_last_1_yr
     where store_id = 1234
-),
+)
 
 select
-    count(buy) / count(l.member_id) as cvr,
-    l.interest_area as interest_area,
-    l.interest_score as interest_score
+    interest_area as interest_area,
+    interest_score as interest_score,
+    count(buy) / count(l.member_id) as cvr
 from last_year_store_member_interest_area
 
 -- Bad
@@ -257,7 +257,7 @@ where
     store_id != 1234
     and interest_area in (select interest_area, rank  as top10_rank
 from ff_store_top_10_interest_area_last_1_yr
-where store_id = 1234)
+where store_id = 1234) l
     and member_id not in (
         select member_id
         from ff_store_shopped_members_before_2_yrs
@@ -269,15 +269,15 @@ where store_id = 1234)
 ```
 -- Good
 select 
-    cashback as cashbackPerc
-    num_stores as storecount
+    cashback as cashbackPerc,
+    num_stores as storecount,
     signup_date as dateSignup
 from ebates_prod.dw.order_transactions
 
 -- Bad
 select 
-    cashback       as cashbackPerc
-    num_stores     as storecount
+    cashback       as cashbackPerc,
+    num_stores     as storecount,
     signup_date    as dateSignup
 from ebates_prod.dw.order_transactions
 
@@ -290,12 +290,13 @@ from ebates_prod.dw.order_transactions
 
 ```
 -- Good
-case lifecycle_stage
-    when 1 then 'stage1_Newbie'
-    when 2 then 'stage2_Browser'
-    when 3 then 'stage3_Browser_Toolbar'
-    WHEN 4 then 'stage4_Shopper_App'
-end as lifecycle
+select
+    case lifecycle_stage
+        when 1 then 'stage1_Newbie'
+        when 2 then 'stage2_Browser'
+        when 3 then 'stage3_Browser_Toolbar'
+        WHEN 4 then 'stage4_Shopper_App'
+    end as lifecycle
 
 -- Bad : Do not repeat the column name on which case statement is being implemented
 select 
@@ -336,9 +337,9 @@ select
 ```
 -- Good
 select distinct
-    interest_area,
-    interest_score,
-    i.member_id as user_id 
+    tx.interest_area,
+    tx.interest_score,
+    ftb.member_id as user_id 
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
@@ -425,7 +426,7 @@ with members as (
         tx.member_id = 1234 and
         tx.store_id = 345 and
         ftb.cashback > 10 and
-        lifecycle_stage !='lst'
+        tx.lifecycle_stage !='lst'
 ), 
 
 stores as (
@@ -439,8 +440,8 @@ stores as (
 select 
     m.*,
     s.*
-from members m 
-join stores s
+from members as m 
+join stores as s
 on 
     m.member_id = s.member_id and 
     m.store_id = s.store_id
