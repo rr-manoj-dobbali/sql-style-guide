@@ -14,7 +14,9 @@ Guide for formatting SQL scripts
 
 ```sql
 -- Good
-select distinct order_merchant_id as store_id, member_id
+select distinct
+    order_merchant_id as store_id,
+    member_id
 from ebates_prod.dw.order_transactions
 
 -- Bad : Dont use upper case & lower case combinations
@@ -59,15 +61,15 @@ select count(*) as itemcount
 ```sql
 -- Good
 select
-    orders.column1 as orders_column1, 
+    orders.column1 as orders_column1,
     count(orders.user_id) as members_count
 from ebates.dw.order_transactions as orders
 
 -- Bad
 select
-    orders.column1 orders_column1, 
+    orders.column1 orders_column1,
     count(orders.user_id) members_count
-from ebates.dw.order_transactions 
+from ebates.dw.order_transactions
 ```
 
 
@@ -114,11 +116,7 @@ If number of columns in selection is less than three or if you are selecting all
 select
     member_id,
     cashback_rate,
-    sales,
-from ebates_prod.temp.some_table
-
--- Good
-select member_id, cashback_rate, sales,
+    sales
 from ebates_prod.temp.some_table
 ```
 
@@ -153,9 +151,9 @@ select distinct
     tx.interest_score,
     ftb.member_id as user_id,
     tx.order_merchant_id as store_id
-from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb
-on tx.member_id = ftb.member_id
+from ebates_prod.dw.order_transactions as tx
+join ebates_prod.summary.member_ftbs_by_store as ftb
+    on tx.member_id = ftb.member_id
 
 -- Bad
 select distinct
@@ -179,15 +177,15 @@ select distinct
     tx.interest_score,
     ftb.member_id as user_id,
     tx.order_merchant_id as store_id
-from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb 
-on tx.member_id = ftb.member_id
+from ebates_prod.dw.order_transactions as tx
+join ebates_prod.summary.member_ftbs_by_store as ftb
+    on tx.member_id = ftb.member_id
 
 -- Bad
 select distinct
  tx.interest_area,
  tx.interest_score,
- ftb.member_id as user_id, 
+ ftb.member_id as user_id,
  tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb
@@ -203,11 +201,17 @@ on tx.member_id = ftb.member_id
 ```sql
 -- Good
 with top10_interests as (
-    select distinct interest_area, interest_score, member_id
+    select distinct
+        interest_area,
+        interest_score,
+        member_id
     from ff_last_year_member_interest_area
 ),
+
 last_year_store_member_interest_area as (
-    select interest_area, rank as top10_rank
+    select
+        interest_area,
+        rank as top10_rank
     ...
     ...
 
@@ -230,20 +234,25 @@ with top10_interests as (
 ```sql
 -- Good
 with top10_interests as (
-    select distinct interest_area, interest_score, member_id
+    select distinct
+        interest_area,
+        interest_score,
+        member_id
     from ff_last_year_member_interest_area
 ),
 
-last_year_store_member_interest_area as ( -- CTE comments go here
-    select interest_area, rank as top10_rank
-    from ff_store_top_10_interest_area_last_1_yr
+last_year_store_member_interest_area as (  -- CTE comments go here
+    select
+        interest_area,
+        rank as top10_rank
+    from top10_interests
     where store_id = 1234
 )
 
 select
     interest_area as interest_area,
     interest_score as interest_score,
-    count(buy) / count(l.member_id) as cvr
+    count(buy) / count(member_id) as cvr
 from last_year_store_member_interest_area
 
 -- Bad
@@ -269,14 +278,14 @@ where store_id = 1234) l
 
 ```sql
 -- Good
-select 
+select
     cashback as cashback_perc,
     num_stores as store_count,
     signup_date as date_signed_up
 from ebates_prod.dw.order_transactions
 
 -- Bad
-select 
+select
     cashback       as cashback_perc,
     num_stores     as store_count,
     signup_date    as date_signed_up
@@ -342,12 +351,12 @@ select distinct
     tx.interest_score,
     ftb.member_id as user_id,
     tx.order_merchant_id as store_id
-from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb
-on
-    tx.member_id = ftb.member_id and
-    tx.store_id = ftb.store_id and
-    tx.column_x = ftb.column_y
+from ebates_prod.dw.order_transactions as tx
+join ebates_prod.summary.member_ftbs_by_store as ftb
+    on
+        tx.member_id = ftb.member_id and
+        tx.store_id = ftb.store_id and
+        tx.column_x = ftb.column_y
 where
     tx.member_id = 1234 and
     tx.store_id = 345
@@ -355,9 +364,9 @@ where
 -- Good
 select distinct
     ...
-from ebates_prod.dw.order_transactions tx
-join ebates_prod.summary.member_ftbs_by_store ftb
-on  tx.member_id = ftb.member_id
+from ebates_prod.dw.order_transactions as tx
+join ebates_prod.summary.member_ftbs_by_store as ftb
+    on tx.member_id = ftb.member_id
 where tx.member_id = 1234
 
 -- Bad
@@ -418,23 +427,23 @@ with members as (
             when 'App' then 'Mobile'
             else 'Other'
         end as page_name
-    from ebates_prod.dw.order_transactions tx
-    join ebates_prod.summary.member_ftbs_by_store ftb
-    on
-        tx.member_id = ftb.member_id and
-        tx.store_id = ftb.store_id
+    from ebates_prod.dw.order_transactions as tx
+    join ebates_prod.summary.member_ftbs_by_store as ftb
+        on
+            tx.member_id = ftb.member_id and
+            tx.store_id = ftb.store_id
     where
         tx.member_id = 1234 and
         tx.store_id = 345 and
-        tx.lifecycle_stage !='lst' and
+        tx.lifecycle_stage != 'lst' and
         ftb.cashback > 10
-        
-), 
+
+),
 
 stores as (
     select
         store_id,
-        ...
+        ...,
         ...
     from ebates_prod.dw.stores
 )
@@ -442,10 +451,10 @@ stores as (
 select
     m.*,
     s.*
-from members as m 
+from member as m
 join stores as s
-on 
-    m.member_id = s.member_id and 
-    m.store_id = s.store_id
+    on
+        m.member_id = s.member_id and
+        m.store_id = s.store_id
 where m.member_id = 123
 ```
