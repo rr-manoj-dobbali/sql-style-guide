@@ -151,7 +151,7 @@ Specify the order of a join with the FROM table first and JOIN table second. In 
 select distinct
     tx.interest_area,
     tx.interest_score,
-    ftb.member_id as user_id 
+    ftb.member_id as user_id,
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
@@ -161,7 +161,7 @@ on tx.member_id = ftb.member_id
 select distinct
     tx.interest_area,
     tx.interest_score,
-    ftb.member_id as user_id 
+    ftb.member_id as user_id,
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
@@ -177,7 +177,7 @@ Use four spaces instead of tabs for indentation. Configure editor to convert tab
 select distinct
     tx.interest_area,
     tx.interest_score,
-    ftb.member_id as user_id 
+    ftb.member_id as user_id,
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
@@ -187,7 +187,7 @@ on tx.member_id = ftb.member_id
 select distinct
  tx.interest_area,
  tx.interest_score,
- ftb.member_id as user_id 
+ ftb.member_id as user_id, 
  tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
@@ -270,16 +270,16 @@ where store_id = 1234) l
 ```
 -- Good
 select 
-    cashback as cashbackPerc,
-    num_stores as storecount,
-    signup_date as dateSignup
+    cashback as cashback_perc,
+    num_stores as store_count,
+    signup_date as date_signed_up
 from ebates_prod.dw.order_transactions
 
 -- Bad
 select 
-    cashback       as cashbackPerc,
-    num_stores     as storecount,
-    signup_date    as dateSignup
+    cashback       as cashback_perc,
+    num_stores     as store_count,
+    signup_date    as date_signed_up
 from ebates_prod.dw.order_transactions
 
 ```
@@ -340,7 +340,7 @@ select
 select distinct
     tx.interest_area,
     tx.interest_score,
-    ftb.member_id as user_id 
+    ftb.member_id as user_id,
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
@@ -364,7 +364,7 @@ where tx.member_id = 1234
 select distinct
     interest_area,
     interest_score,
-    i.member_id as user_id 
+    i.member_id as user_id,
     tx.order_merchant_id as store_id
 from ebates_prod.dw.order_transactions tx
 join ebates_prod.summary.member_ftbs_by_store ftb 
@@ -426,8 +426,9 @@ with members as (
     where 
         tx.member_id = 1234 and
         tx.store_id = 345 and
-        ftb.cashback > 10 and
-        tx.lifecycle_stage !='lst'
+        tx.lifecycle_stage !='lst' and
+        ftb.cashback > 10
+        
 ), 
 
 stores as (
