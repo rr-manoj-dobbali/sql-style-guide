@@ -109,7 +109,7 @@ select member_id, cashback_rate, sales, num_orders, commission, cashback, number
 from ebates_prod.temp.some_table
 ```
 
-If number of columns in selection is less than three or if you are selecting all the columns using `*`, write it down in a single line or write one column per line
+If you are selecting all the columns using `*`, write it down in a single line or write one column per line
 
 ```sql
 -- Good
@@ -265,7 +265,7 @@ from (
 from ff_last_year_member_interest_area
 where
     store_id != 1234
-    and interest_area in (select interest_area, rank  as top10_rank
+    and interest_area in (select interest_area, rank as top10_rank
 from ff_store_top_10_interest_area_last_1_yr
 where store_id = 1234) l
     and member_id not in (
@@ -339,7 +339,7 @@ select
 
 ## `on` & `where` condition
 
-- Write `on` in its own line if there are multiple joining conditions
+- Write `on` in its own line if there are multiple joining conditions and keep it indented one level than `select`, `from`, `join`..
 - When multiple conditions for joining, all `and`s should be one level deeper than `on`, each condition should end with `and` instead of starting with it
 - same logic applies to `where` condition
 - Only exception is when there is only one condition, in that case `on` condition can be in the same line as `on`
@@ -437,7 +437,6 @@ with members as (
         tx.store_id = 345 and
         tx.lifecycle_stage != 'lst' and
         ftb.cashback > 10
-
 ),
 
 stores as (
