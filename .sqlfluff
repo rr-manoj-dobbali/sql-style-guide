@@ -1,0 +1,6 @@
+[sqlfluff]
+dialect = snowflake
+exclude_rules = L007,L031
+
+[sqlfluff:rules:L016]
+max_line_length=120
