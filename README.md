@@ -395,7 +395,7 @@ select
     row_number() over (partition by user_id order by order_date desc) as order_rank
 from ebates_prod.dw.shopping_trips
 
--- Okay
+-- Bad
 select
     user_id,
     name,
