@@ -257,7 +257,7 @@ from last_year_store_member_interest_area
 
 -- Bad
 select
-    count(buy) / count(l.member_id) as cvr,
+    count(l.buy) / count(l.member_id) as cvr,
     l.interest_area as interest_area,
     l.interest_score as interest_score
 from (
